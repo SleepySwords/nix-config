@@ -16,6 +16,7 @@ in
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHz29F59kPjXDtuA12h3U2qUL/aun7yMellK4WR4h7Ye ibby"
     ];
+  } // pkgs.lib.optionalAttrs (pkgs.lib.hasPrefix "darwin" system) {
     isNormalUser = true;
   };
 
@@ -38,7 +39,7 @@ in
     else
       {
         extraConfig = ''
-          deploy ALL=(root) NOPASSWD: /run/current-system/sw/bin/darwin-rebuild switch --flake github:SleepySwords/nix-config --show-trace
+          deploy ALL=(root) NOPASSWD: /run/current-system/sw/bin/darwin-rebuild switch --flake github\:SleepySwords/nix-config --show-trace
         '';
       };
 
