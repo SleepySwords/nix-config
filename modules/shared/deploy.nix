@@ -1,13 +1,15 @@
 { pkgs, ... }:
 let
+  darwin-rebuild = "/run/current-system/sw/bin/darwin-rebuild";
+  nixos-rebuild = "${toString pkgs.nixos-rebuild}/bin/nixos-rebuild";
+  rebuild-command = if pkgs.lib.hasPrefix "darwin" system then darwin-rebuild else nixos-rebuild;
   deploy-from-git = (
     pkgs.writeShellScriptBin "deploy-from-git" ''
       #!/bin/bash
-      sudo ${"${toString pkgs.nixos-rebuild}/bin/nixos-rebuild"} switch --flake github:SleepySwords/nix-config --show-trace
+      sudo ${rebuild-command} switch --flake github:SleepySwords/nix-config --show-trace
     ''
   );
   system = pkgs.stdenv.hostPlatform.system;
-
 in
 {
   users.users.deploy = {
@@ -36,7 +38,7 @@ in
     else
       {
         extraConfig = ''
-          deploy ALL=(root) NOPASSWD: /run/current-system/sw/bin/darwin-rebuild switch
+          deploy ALL=(root) NOPASSWD: /run/current-system/sw/bin/darwin-rebuild switch --flake github:SleepySwords/nix-config --show-trace
         '';
       };
 
