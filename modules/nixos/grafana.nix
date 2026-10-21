@@ -1,7 +1,8 @@
-{config, pkgs, ...}: {
+{ config, ... }: {
   services.grafana = {
     enable = true;
     settings = {
+      security.secret_key = "\$__file{${config.sops.secrets.grafanaSecret.path}}";
       server = {
         http_addr = "127.0.0.1";
         http_port = 3000;
@@ -14,9 +15,9 @@
 
   services.nginx.virtualHosts."hlb.sleepyswords.dev" = {
     locations."/dash" = {
-        proxyPass = "http://${toString config.services.grafana.settings.server.http_addr}:${toString config.services.grafana.settings.server.http_port}";
-        proxyWebsockets = true;
-        recommendedProxySettings = true;
+      proxyPass = "http://${toString config.services.grafana.settings.server.http_addr}:${toString config.services.grafana.settings.server.http_port}";
+      proxyWebsockets = true;
+      recommendedProxySettings = true;
     };
   };
 }

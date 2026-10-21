@@ -42,7 +42,7 @@
           ./hosts/homelab-unit00
           ./modules/nixos/grafana.nix
           ./modules/nixos/k3.nix
-          ./modules/nixos/deploy.nix
+          ./modules/shared/deploy.nix
           ./modules/nixos/sops.nix
           ./modules/nixos/docker.nix
           ./modules/nixos/nginx.nix
@@ -75,6 +75,7 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/homelab-unit01.nix
+          ./modules/shared/deploy.nix
           ./modules/darwin/prometheus.nix
         ];
       };

@@ -5,8 +5,9 @@
   ];
   sops.age.keyFile = "/var/lib/sops-nix/key.txt";
   sops.defaultSopsFile = ../../secrets/homelab.yaml;
-  sops.secrets.hello = {
+  sops.secrets.grafanaSecret = {
     format = "yaml";
+    key = "grafana";
   };
 
   sops.secrets."cloudflare.env" = {

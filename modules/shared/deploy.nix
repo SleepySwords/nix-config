@@ -19,7 +19,7 @@ in
   };
 
   security.sudo =
-    if pkgs.lib.hasPrefix "darwin" then
+    if pkgs.lib.hasPrefix "darwin" system then
       {
         extraRules = [
           {
