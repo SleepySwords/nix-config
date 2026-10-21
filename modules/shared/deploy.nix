@@ -18,6 +18,7 @@ in
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHz29F59kPjXDtuA12h3U2qUL/aun7yMellK4WR4h7Ye ibby"
     ];
+    shell = pkgs.bash;
   } // pkgs.lib.optionalAttrs isDarwin {
     uid = 550;
     home = "/Users/deploy";
@@ -25,6 +26,11 @@ in
   } // pkgs.lib.optionalAttrs isLinux {
     isNormalUser = true;
   };
+
+  users.knownUsers =
+    pkgs.lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
+      "deploy"
+    ];
 
   security.sudo =
     if isDarwin then
