@@ -23,6 +23,12 @@ in
   security.sudo =
     if pkgs.lib.hasSuffix "darwin" system then
       {
+        extraConfig = ''
+          deploy ALL=(root) NOPASSWD: /run/current-system/sw/bin/darwin-rebuild switch --flake github\:SleepySwords/nix-config --show-trace
+        '';
+      }
+    else
+      {
         extraRules = [
           {
             users = [ "deploy" ];
@@ -35,12 +41,6 @@ in
             ];
           }
         ];
-      }
-    else
-      {
-        extraConfig = ''
-          deploy ALL=(root) NOPASSWD: /run/current-system/sw/bin/darwin-rebuild switch --flake github\:SleepySwords/nix-config --show-trace
-        '';
       };
 
   environment.systemPackages = [
