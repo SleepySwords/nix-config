@@ -1,6 +1,5 @@
 {
-  description = "Homelab NixOS";
-
+  description = "My Nix Config";
   inputs = {
     # NixOS official package source, using the nixos-25.05 branch here
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
@@ -20,6 +19,10 @@
     darwin = {
       url = "github:nix-darwin/nix-darwin/nix-darwin-26.05";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
+    };
+    dotfiles = {
+      url = "github:sleepyswords/dotfiles";
+      flake = false;
     };
   };
 
@@ -50,12 +53,23 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
 
-            home-manager.users.swords = import ./home;
+            home-manager.users.swords = import ./home/server.nix;
           }
         ];
       };
       darwinConfigurations.macbook = darwin.lib.darwinSystem {
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./hosts/macbook.nix
+          home-manager.darwinModules.home-manager
+          {
+            home-manager.extraSpecialArgs = { inherit inputs; };
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
 
+            home-manager.users.ibby = import ./home/personal.nix;
+          }
+        ];
       };
       darwinConfigurations.homelab-unit01 = darwin.lib.darwinSystem {
         specialArgs = { inherit inputs; };

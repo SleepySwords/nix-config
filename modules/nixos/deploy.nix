@@ -3,15 +3,7 @@ let
   deploy-from-git = (pkgs.writeShellScriptBin "deploy-from-git" ''
 #!/bin/bash
 
-URL="''${NIXOS_CONFIG:-https://github.com/SleepySwords/nixos-config}"
-
-if cd ~/nixos-config;
-    then git fetch;
-         git reset --hard origin/master;
-    else git clone $URL ~/nixos-config;
-fi;
-
-sudo ${"${toString pkgs.nixos-rebuild}/bin/nixos-rebuild"} switch --flake ~/nixos-config --show-trace
+sudo ${"${toString pkgs.nixos-rebuild}/bin/nixos-rebuild"} switch --flake github:SleepySwords/nix-config --show-trace
     '');
 in {
   users.users.deploy = {
@@ -25,7 +17,7 @@ in {
   security.sudo.extraRules = [
     {
       users = ["deploy"];
-      commands = [ { command = "${toString pkgs.nixos-rebuild}/bin/nixos-rebuild"; options = [ "SETENV" "NOPASSWD" ]; } ];
+      commands = [ { command = "${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake github:SleepySwords/nix-config --show-trace"; options = [ "NOPASSWD" ]; } ];
     }
   ];
 
