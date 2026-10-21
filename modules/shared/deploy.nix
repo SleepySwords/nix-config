@@ -2,7 +2,9 @@
 let
   darwin-rebuild = "/run/current-system/sw/bin/darwin-rebuild";
   nixos-rebuild = "${toString pkgs.nixos-rebuild}/bin/nixos-rebuild";
-  rebuild-command = if pkgs.lib.hasSuffix "darwin" system then darwin-rebuild else nixos-rebuild;
+  isLinux = pkgs.stdenv.hostPlatform.isLinux;
+  isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
+  rebuild-command = if isDarwin then darwin-rebuild else nixos-rebuild;
   system = pkgs.stdenv.hostPlatform.system;
   deploy-from-git = (
     pkgs.writeShellScriptBin "deploy-from-git" ''
@@ -16,12 +18,16 @@ in
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHz29F59kPjXDtuA12h3U2qUL/aun7yMellK4WR4h7Ye ibby"
     ];
-  } // pkgs.lib.optionalAttrs (!pkgs.lib.hasSuffix "darwin" system) {
+  } // pkgs.lib.optionalAttrs isDarwin {
+    uid = 550;
+    home = "/Users/deploy";
+    createHome = true;
+  } // pkgs.lib.optionalAttrs isLinux {
     isNormalUser = true;
   };
 
   security.sudo =
-    if pkgs.lib.hasSuffix "darwin" system then
+    if isDarwin then
       {
         extraConfig = ''
           deploy ALL=(root) NOPASSWD: /run/current-system/sw/bin/darwin-rebuild switch --flake github\:SleepySwords/nix-config --show-trace
