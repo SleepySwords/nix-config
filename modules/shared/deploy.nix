@@ -15,7 +15,6 @@ in
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHz29F59kPjXDtuA12h3U2qUL/aun7yMellK4WR4h7Ye ibby"
     ];
     isNormalUser = true;
-    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
   };
 
   security.sudo =
@@ -24,6 +23,7 @@ in
         extraRules = [
           {
             users = [ "deploy" ];
+            runAs = "root";
             commands = [
               {
                 command = "${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake github:SleepySwords/nix-config --show-trace";
